@@ -5,8 +5,8 @@
 A lightweight Chrome extension that detects your LinkedIn chat contacts' locations and displays their current local time converted to **Indian Standard Time (IST)** — directly inside the LinkedIn messaging interface.
 
 ---
-How does it came in my mind:
-Read this: https://claude.ai/public/artifacts/d5e4844c-a566-4eeb-917f-0693ef518aa7
+<!-- How does it came in my mind:
+Read this: https://claude.ai/public/artifacts/d5e4844c-a566-4eeb-917f-0693ef518aa7 -->
 ---
 
 ## 📌 Overview
