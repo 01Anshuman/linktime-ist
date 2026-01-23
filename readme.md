@@ -11,6 +11,8 @@ A lightweight Chrome extension that detects your LinkedIn chat contacts' locatio
 LinkTime IST helps professionals working across global time zones avoid scheduling confusion. It automatically reads the contact’s local time from LinkedIn chat, converts it into IST, and displays it inline in a clean, native-looking format.
 
 ---
+## Screenshot
+![Linkedin message wiht TIme](image.png)
 
 
 

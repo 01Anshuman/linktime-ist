@@ -1,86 +1,53 @@
-// LinkTime IST v2.0 - Simplified Always-Working Version
-console.log('🕐 LinkTime IST v2.0 loaded');
+// LinkTime IST - FORCE VISIBLE VERSION
+console.log('🚀 LinkTime IST - FORCE VISIBLE VERSION');
 
-// City to timezone mapping
 const CITY_TIMEZONE = {
-  // Format: 'city, country': 'Timezone'
+  'london': 'Europe/London',
   'london, uk': 'Europe/London',
-  'london, united kingdom': 'Europe/London',
+  'new york': 'America/New_York',
   'new york, ny': 'America/New_York',
-  'new york, usa': 'America/New_York',
-  'los angeles, ca': 'America/Los_Angeles',
-  'san francisco, ca': 'America/Los_Angeles',
-  'chicago, il': 'America/Chicago',
   'singapore': 'Asia/Singapore',
-  'singapore, singapore': 'Asia/Singapore',
-  'tokyo, japan': 'Asia/Tokyo',
-  'sydney, australia': 'Australia/Sydney',
-  'dubai, uae': 'Asia/Dubai',
-  'bangalore, india': 'Asia/Kolkata',
-  'mumbai, india': 'Asia/Kolkata',
-  'delhi, india': 'Asia/Kolkata',
-  'paris, france': 'Europe/Paris',
-  'berlin, germany': 'Europe/Berlin',
-  'toronto, canada': 'America/Toronto',
-  'amsterdam, netherlands': 'Europe/Amsterdam',
+  'tokyo': 'Asia/Tokyo',
+  'sydney': 'Australia/Sydney',
+  'dubai': 'Asia/Dubai',
+  'bangalore': 'Asia/Kolkata',
+  'bengaluru': 'Asia/Kolkata',
+  'mumbai': 'Asia/Kolkata',
+  'delhi': 'Asia/Kolkata',
 };
 
-// Timezone offsets from UTC (in hours)
 const TIMEZONE_OFFSETS = {
   'Europe/London': 0,
   'America/New_York': -5,
-  'America/Los_Angeles': -8,
-  'America/Chicago': -6,
   'Asia/Singapore': 8,
   'Asia/Tokyo': 9,
   'Australia/Sydney': 11,
   'Asia/Dubai': 4,
   'Asia/Kolkata': 5.5,
-  'Europe/Paris': 1,
-  'Europe/Berlin': 1,
-  'America/Toronto': -5,
-  'Europe/Amsterdam': 1,
 };
 
 function getTimezoneFromLocation(location) {
   if (!location) return null;
-  
   const loc = location.toLowerCase().trim();
-  console.log('🔍 Looking for timezone for:', loc);
   
-  // Direct match
-  if (CITY_TIMEZONE[loc]) {
-    console.log('✅ Found timezone:', CITY_TIMEZONE[loc]);
-    return CITY_TIMEZONE[loc];
-  }
+  if (CITY_TIMEZONE[loc]) return CITY_TIMEZONE[loc];
   
-  // Partial match
   for (const [city, tz] of Object.entries(CITY_TIMEZONE)) {
-    if (loc.includes(city.split(',')[0])) {
-      console.log('✅ Partial match found:', tz);
-      return tz;
-    }
+    if (loc.includes(city.split(',')[0])) return tz;
   }
   
-  console.log('❌ No timezone found for:', location);
   return null;
 }
 
 function getCurrentTime(timezone) {
   const now = new Date();
   const offset = TIMEZONE_OFFSETS[timezone] || 0;
-  const istOffset = 5.5; // IST is UTC+5:30
+  const istOffset = 5.5;
   
-  // Get UTC time
   const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
-  
-  // Get their time
   const theirTime = new Date(utcTime + (offset * 3600000));
-  
-  // Get IST time
   const istTime = new Date(utcTime + (istOffset * 3600000));
   
-  // Format times
   const formatTime = (date) => {
     let hours = date.getHours();
     const minutes = date.getMinutes();
@@ -97,116 +64,219 @@ function getCurrentTime(timezone) {
 }
 
 function extractLocationFromPage() {
-  console.log('🔎 Searching for location on page...');
+  console.log('🔍 Searching for location...');
   
-  // Try multiple methods to find location
+  // Get ALL text on page
+  const allText = document.body.innerText;
   
-  // Method 1: Look in profile header
-  const profileElements = document.querySelectorAll('[class*="entity-lockup"], [class*="profile"], span, div');
+  // Try to find location patterns
+  const patterns = [
+    /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?),\s*([A-Z]{2,})/g,
+    /\b(London|New York|Singapore|Tokyo|Dubai|Bangalore|Mumbai|Delhi)\b/gi
+  ];
   
-  for (const element of profileElements) {
-    const text = element.textContent.trim();
-    
-    // Pattern: "City, Country" or "City, State"
-    if (/^[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*,\s*[A-Z]{2,}/.test(text) && text.length < 50) {
-      console.log('📍 Found potential location:', text);
-      
-      const tz = getTimezoneFromLocation(text);
-      if (tz) {
-        return { location: text, timezone: tz };
+  for (const pattern of patterns) {
+    const matches = allText.match(pattern);
+    if (matches) {
+      for (const match of matches) {
+        const tz = getTimezoneFromLocation(match);
+        if (tz) {
+          console.log('✅ Found location:', match);
+          return { location: match, timezone: tz };
+        }
       }
     }
   }
   
-  console.log('⚠️ Could not find location on page');
+  console.log('⚠️ No location found');
   return null;
 }
 
-function createTimeBadge(locationData) {
-  console.log('💉 Creating time badge...');
+function createFloatingBadge(locationData) {
+  console.log('💉 Creating FLOATING badge...');
   
-  // Remove existing badge
-  const existing = document.querySelector('.linktime-badge');
+  // Remove existing
+  const existing = document.getElementById('linktime-floating-badge');
   if (existing) existing.remove();
   
-  // Create badge
+  // Create floating badge (IMPOSSIBLE TO MISS)
   const badge = document.createElement('div');
-  badge.className = 'linktime-badge';
+  badge.id = 'linktime-floating-badge';
   
   if (locationData) {
     const times = getCurrentTime(locationData.timezone);
     badge.innerHTML = `
-      <div class="linktime-icon">🕐</div>
-      <div class="linktime-info">
-        <div class="linktime-row">
-          <span class="linktime-label">Their Time:</span>
-          <span class="linktime-value">${times.theirTime}</span>
+      <div style="
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 999999;
+        background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
+        color: white;
+        padding: 16px 20px;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        min-width: 280px;
+        animation: slideInRight 0.5s ease-out;
+      ">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+          <span style="font-size: 24px;">🕐</span>
+          <span style="font-weight: 700; font-size: 16px;">LinkTime IST</span>
         </div>
-        <div class="linktime-row">
-          <span class="linktime-label">IST:</span>
-          <span class="linktime-value">${times.istTime}</span>
+        <div style="background: rgba(255,255,255,0.15); height: 1px; margin: 12px 0;"></div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="opacity: 0.9; font-size: 13px;">📍 Location:</span>
+            <span style="font-weight: 600; font-size: 13px;">${locationData.location}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="opacity: 0.9; font-size: 13px;">⏰ Their Time:</span>
+            <span style="font-weight: 700; font-size: 16px; color: #ffd700;">${times.theirTime}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="opacity: 0.9; font-size: 13px;">🇮🇳 IST:</span>
+            <span style="font-weight: 700; font-size: 16px; color: #90EE90;">${times.istTime}</span>
+          </div>
+        </div>
+        <div style="
+          margin-top: 12px;
+          padding-top: 12px;
+          border-top: 1px solid rgba(255,255,255,0.2);
+          font-size: 11px;
+          opacity: 0.8;
+          text-align: center;
+        ">
+          Updates every minute
         </div>
       </div>
     `;
   } else {
-    // Show only IST if location not found
     const times = getCurrentTime('Asia/Kolkata');
     badge.innerHTML = `
-      <div class="linktime-icon">🕐</div>
-      <div class="linktime-info">
-        <div class="linktime-row">
-          <span class="linktime-label">IST:</span>
-          <span class="linktime-value">${times.istTime}</span>
+      <div style="
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 999999;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        color: white;
+        padding: 16px 20px;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        min-width: 280px;
+        animation: slideInRight 0.5s ease-out;
+      ">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+          <span style="font-size: 24px;">🕐</span>
+          <span style="font-weight: 700; font-size: 16px;">LinkTime IST</span>
         </div>
-        <div class="linktime-note">Location not detected</div>
+        <div style="background: rgba(255,255,255,0.15); height: 1px; margin: 12px 0;"></div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="
+            background: rgba(255,255,255,0.2);
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 8px;
+          ">
+            <div style="font-size: 12px; opacity: 0.9; margin-bottom: 4px;">⚠️ Location Not Detected</div>
+            <div style="font-size: 10px; opacity: 0.8;">Contact may not have location in profile</div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="opacity: 0.9; font-size: 13px;">🇮🇳 Current IST:</span>
+            <span style="font-weight: 700; font-size: 18px; color: #90EE90;">${times.istTime}</span>
+          </div>
+        </div>
+        <div style="
+          margin-top: 12px;
+          padding-top: 12px;
+          border-top: 1px solid rgba(255,255,255,0.2);
+          font-size: 10px;
+          opacity: 0.8;
+          text-align: center;
+        ">
+          Try opening a chat with someone who has<br>their location visible (e.g., "New York, NY")
+        </div>
       </div>
     `;
   }
   
-  // Find where to insert
-  const insertPoints = [
-    '.msg-thread__topcard-item-list',
-    '.msg-overlay-bubble-header__details',
-    '.msg-thread__topcard',
-  ];
-  
-  for (const selector of insertPoints) {
-    const target = document.querySelector(selector);
-    if (target) {
-      target.appendChild(badge);
-      console.log('✅ Badge inserted at:', selector);
-      return true;
+  // Add animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideInRight {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
+  `;
+  document.head.appendChild(style);
+  
+  // Insert into page
+  document.body.appendChild(badge);
+  console.log('✅✅✅ FLOATING BADGE INSERTED!');
+  
+  // Make it draggable (bonus feature!)
+  makeDraggable(badge);
+}
+
+function makeDraggable(element) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  
+  element.onmousedown = dragMouseDown;
+  element.style.cursor = 'move';
+  
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
   }
   
-  console.log('❌ Could not find insertion point');
-  return false;
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    element.style.top = (element.offsetTop - pos2) + "px";
+    element.style.right = "auto";
+    element.style.left = (element.offsetLeft - pos1) + "px";
+  }
+  
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
 }
 
 function init() {
-  console.log('🚀 Initializing LinkTime IST...');
+  console.log('🚀 Initializing...');
   
   setTimeout(() => {
     const locationData = extractLocationFromPage();
-    
-    if (locationData) {
-      console.log('✅ Location found:', locationData.location);
-      console.log('✅ Timezone:', locationData.timezone);
-    } else {
-      console.log('⚠️ Using IST-only mode');
-    }
-    
-    createTimeBadge(locationData);
+    createFloatingBadge(locationData);
     
     // Update every minute
     setInterval(() => {
-      createTimeBadge(locationData);
+      createFloatingBadge(locationData);
     }, 60000);
     
-  }, 2000);
+    console.log('✅ Ready!');
+  }, 3000);
 }
 
-// Run on page load
+// Start
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {
@@ -219,9 +289,8 @@ new MutationObserver(() => {
   const url = location.href;
   if (url !== lastUrl) {
     lastUrl = url;
-    console.log('🔄 Page changed, reinitializing...');
-    setTimeout(init, 1000);
+    init();
   }
 }).observe(document, { subtree: true, childList: true });
 
-console.log('✅ LinkTime IST ready!');
+console.log('🎬 LinkTime IST loaded!');
