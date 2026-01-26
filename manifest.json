@@ -1,15 +1,16 @@
 {
   "manifest_version": 3,
   "name": "LinkTime IST",
-  "version": "2.0.0",
-  "description": "Always show contact's current time in IST on LinkedIn",
+  "version": "1.0.0",
+  "description": "Professional timezone converter for LinkedIn",
   "permissions": ["activeTab"],
   "host_permissions": ["https://www.linkedin.com/*"],
   "content_scripts": [
     {
-      "matches": ["https://www.linkedin.com/messaging/*"],
+      "matches": [
+        "https://www.linkedin.com/messaging/*"
+      ],
       "js": ["content.js"],
-      "css": ["styles.css"],
       "run_at": "document_end"
     }
   ]
